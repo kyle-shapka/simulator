@@ -60,28 +60,28 @@ class Ant {
                         continue;
                     }
                     let diff = last - current;
-                    if ( 0 == last ) {
-                        if ( diff < min ) {
-                            x2 = boundedX;
-                            y2 = boundedY;
+                        if ( 0 == last ) {
+                            if ( diff < min ) {
+                                x2 = boundedX;
+                                y2 = boundedY;
+                            }
                         }
-                    }
-                    else {
-                        if ( diff > max ) {
-                            x2 = boundedX;
-                            y2 = boundedY;
+                        else {
+                            if ( diff > max ) {
+                                x2 = boundedX;
+                                y2 = boundedY;
+                            }
                         }
-                    }
                 }
             }
             // There's always a small chance of moving randomly instead.
             // Try moving this to the top so that we can save computation
             // I also don't like that they *always* might move randomly. That doesn't make sense when returning home.
-            /* if ( Math.random() < 0.05 ) {
+            if ( Math.random() < 0.05 ) {
                 new_coords = this.world.get_random_coordinates( x1, y1 );
                 x2 = new_coords[0];
                 y2 = new_coords[1];
-            } */
+            }
         }
 
         // Now that we've chosen new coordinates, it's time to move.

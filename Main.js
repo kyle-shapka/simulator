@@ -63,7 +63,7 @@ const color_for_cell = ( cell ) => {
             let signal = cell.signal > 1 ? 1 : cell.signal;
             return "rgba(17,103,189," + cell.signal + ")";
         }
-        else return "rgb(250,250,250)";
+        else return colours.background;
     }
 }
 

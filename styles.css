@@ -1,0 +1,19 @@
+* {
+    box-sizing: border-box;
+} 
+
+/* <body> from the html file */
+body {
+    background: #333;
+    overflow: hidden;
+}
+
+canvas {
+    /* Center horizontally and vertically */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate( -50%, -50% ); 
+
+    outline: 2px solid limegreen;
+}

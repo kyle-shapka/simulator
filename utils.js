@@ -1,3 +1,7 @@
+let colours = {
+    background: '#333'
+}
+
 let utils = {
 
     // Replaces indices that would be outside of range with min or max, respectively.
@@ -7,7 +11,7 @@ let utils = {
             bounded_index = min;
         }
         if ( index >= max ) {
-            bounded_index = max - 1;
+            bounded_index = max;
         }
         return bounded_index;
     },
