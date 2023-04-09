@@ -1,92 +1,28 @@
-let _data; // data from previous update
-let world = new World( _data );
+let world = new World();
+let renderer = new Renderer( 600, 600 );
 
-function draw_grid( data ) {
-    const width = 600;
-    const height = 600;
-
-    world.grid_length = data.length;
-
-    let width_cell = width / world.grid_length;
-    let height_cell = height / world.grid_length;
-
-    let canvas = document.getElementById( 'grid' )
-    if ( null === canvas ) {
-        canvas = document.createElement( 'canvas' );
-        canvas.id = 'grid';
-        canvas.width = width;
-        canvas.height = height;
-        document.getElementsByTagName('body')[0].appendChild(canvas);
-    }
-
-    let context = canvas.getContext("2d");
-    
-    function draw_cells(){
-        
-        for ( let i = 0; i < world.grid_length; i++ ) {
-            for ( let j = 0; j < world.grid_length; j++ ) {
-                if ( _data && _data[ i ][ j ] === color_for_cell( data[ i ][ j ] ) ) {
-                    continue;
-                } 
-                context.clearRect( i * width_cell, j * height_cell, width_cell, height_cell );
-                context.fillStyle = color_for_cell( data[ i ][ j ] );
-                context.fillRect( i * width_cell, j * height_cell, width_cell, height_cell );
-            }
-        }
-        
-    }
-    draw_cells();
-    if ( ! _data ) {
-        _data = [];
-    }
-    for ( let i = 0; i < world.grid_length; i++ ) {
-        _data[ i ] = [];
-        for ( let j = 0; j < world.grid_length; j++ ){
-            _data[ i ][ j ] = color_for_cell( data[ i ][ j ] );
-        }
-    }
-}
-
-function update_grid( data ) {
-    draw_grid( data );
-}
-
-const color_for_cell = ( cell ) => {
-    if ( cell.has_ant() ) {
-        return cell.ant.has_food ? "rgb(159,248,101)" : "rgb(0,0,0)";
-    }
-    else if ( cell.food > 0 ) {
-        return "rgba(86,169,46," + Math.pow( cell.food / 10,0.5 ) + ")";
-    }
-    else {
-        if ( cell.signal > 0 ) {
-            let signal = cell.signal > 1 ? 1 : cell.signal;
-            return "rgba(17,103,189," + cell.signal + ")";
-        }
-        else return colours.background;
-    }
-}
-
-const opacity_for_signal = ( cell ) => {
-    return cell.has_ant() ? "1.0": cell.signal;
-}
+initialize_simulation();
+let interval_id = setInterval( simulate_and_visualize, world.ms_between_updates );
 
 function initialize_simulation() {
     world.init();
-    draw_grid( world.grid.map( ( row ) => {
+    renderer.init();
+    renderer.draw( world.grid.map( ( row ) => {
         return row.map( (cell) => {
             return cell;
         });
     }));
 }
 
-initialize_simulation();
-let interval_id = setInterval( simulate_and_visualize, world.ms_between_updates );
+const opacity_for_signal = ( cell ) => {
+    return cell.has_ant() ? "1.0": cell.signal;
+}
+
 
 
 function simulate_and_visualize() {
     run_time_step();
-    update_grid( world.grid.map( ( row )=> {
+    renderer.draw( world.grid.map( ( row )=> {
         return row.map( ( cell )=> {
             return cell;
         });
