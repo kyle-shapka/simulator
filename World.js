@@ -5,9 +5,9 @@ class World {
         this.temp_grid = [];
         this.population = [];
         this.max_ants_on_grid = 100;
-        this.ms_between_updates = 33; // this shouldn't be here -> move to draw
+        //this.ms_between_updates = 33; // this shouldn't be here -> move to draw
         this.ants_out_of_nest = 0;
-        this.colony = new Colony( 0, 0 );
+        //this.colony = new Colony( 0, 0 );
 
     }
 

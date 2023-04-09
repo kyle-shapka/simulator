@@ -36,7 +36,6 @@ class Renderer {
     draw_cells( grid ){
         let width_cell = this.width / grid.length;
         let height_cell = this.height / grid.length;
-        console.log (grid.length)
             
         for ( let x = 0; x < grid.length; x++ ) {
             for ( let y = 0; y < grid.length; y++ ) {

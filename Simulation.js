@@ -1,12 +1,17 @@
 let world = new World();
 let renderer = new Renderer( 600, 600 );
 
-initialize_simulation();
-let interval_id = setInterval( simulate_and_visualize, world.ms_between_updates );
+setup();
+//let interval_id = setInterval( simulate_and_visualize, world.ms_between_updates );
 
-function initialize_simulation() {
+function setup() {
     world.init();
     renderer.init();
+    draw();
+    begin();
+}
+
+function draw() {
     renderer.draw( world.grid.map( ( row ) => {
         return row.map( (cell) => {
             return cell;
@@ -14,66 +19,49 @@ function initialize_simulation() {
     }));
 }
 
-const opacity_for_signal = ( cell ) => {
-    return cell.has_ant() ? "1.0": cell.signal;
-}
+function begin() { // cap this at a certain fps or simulation speed adjustable
+    const step = () => {
+        move_ants();
+        check_for_food();
+        sense_signal();
+        draw();
 
-
-
-function simulate_and_visualize() {
-    run_time_step();
-    renderer.draw( world.grid.map( ( row )=> {
-        return row.map( ( cell )=> {
-            return cell;
-        });
-    }));
-}
-
-function run_time_step() {
-    move_ants();
-    check_for_food();
-    sense_signal();	
-}
-
-function sense_signal() {
-    for ( let i = 0; i < world.grid_length; i = i + 1 ) {
-        for ( let j = 0; j < world.grid_length; j = j + 1) {
-            if ( world.grid[ i ][ j ].has_ant()) {
-                world.grid[ i ][ j ].ant.last_signal = world.grid[ i ][ j ].signal;
-            }
-        }
+        requestAnimationFrame( () => {
+            step();
+        } );
     }
+    step();
 }
 
 function move_ants() {
-    for ( let i = 0; i < world.grid_length; i = i + 1 ) {
-        for ( let j = 0; j < world.grid_length; j = j + 1 ) {
-            if ( world.grid[ i ][ j ].has_ant() ) {
-                let ant = world.grid[ i ][ j ].ant;
+    for ( let x = 0; x < world.grid_length; x = x + 1 ) {
+        for ( let y = 0; y < world.grid_length; y = y + 1 ) {
+            if ( world.grid[ x ][ y ].has_ant() ) {
+                let ant = world.grid[ x ][ y ].ant;
                 ant.move();
             }
         }
     }
     // signal
-    for ( let i = 0; i < world.grid_length; i = i + 1 ) {
-        for ( let j = 0; j < world.grid_length; j = j + 1 ) {
+    for ( let x = 0; x < world.grid_length; x = x + 1 ) {
+        for ( let y = 0; y < world.grid_length; y = y + 1 ) {
             // adjust reference
-            world.grid[ i ][ j ].ant = world.temp_grid[ i ][ j ].ant; 
-            if ( world.grid[ i ][ j ].has_ant() && world.grid[ i ][ j ].ant.has_food) {
-                bounded_i = utils.get_bounded_index( i, 0, world.grid_length - 1 );
-                bounded_j = utils.get_bounded_index( j, 0, world.grid_length - 1 );
-                let signal_strength = 1 - Math.pow( 0.5, 1 / utils.calc_distance( i, j, bounded_i, bounded_j ) );
-                world.grid[ bounded_i ][ bounded_j ].signal += signal_strength;
+            world.grid[ x ][ y ].ant = world.temp_grid[ x ][ y ].ant; 
+            if ( world.grid[ x ][ y ].has_ant() && world.grid[ x ][ y ].ant.has_food) {
+                bounded_x = utils.get_bounded_index( x, 0, world.grid_length - 1 );
+                bounded_y = utils.get_bounded_index( y, 0, world.grid_length - 1 );
+                let signal_strength = 1 - Math.pow( 0.5, 1 / utils.calc_distance( x, y, bounded_x, bounded_y ) );
+                world.grid[ bounded_x ][ bounded_y ].signal += signal_strength;
                 // is the ant near the nest with food? drop food
-                if ( i < 5 && j < 5 ) {
-                    world.grid[ i ][ j ].ant.has_food = false;
+                if ( x < 5 && y < 5 ) {
+                    world.grid[ x ][ y ].ant.has_food = false;
                 }
             }
             else {
-                world.grid[ i ][ j ].signal *= 0.95;	
+                world.grid[ x ][ y ].signal *= 0.95;	
             }
-            if ( world.grid[ i ][ j ].signal < 0.05 ) {
-                world.grid[ i ][ j ].signal = 0;	
+            if ( world.grid[ x ][ y ].signal < 0.05 ) {
+                world.grid[ x ][ y ].signal = 0;	
             }
         }
     }
@@ -86,7 +74,7 @@ function spawn_ant() {
     let new_coords = world.get_random_coordinates( x1, y1 );
     let x2 = new_coords[0];
     let y2 = new_coords[1];
-    if ( ! world.grid[ x2 ][ y2 ].has_ant() && world.ants_out_of_nest < world.max_ants_on_grid) {
+    if ( ! world.grid[ x2 ][ y2 ].has_ant() && world.ants_out_of_nest < world.max_ants_on_grid ) {
         world.grid[ x2 ][ y2 ].ant = new Ant( x2, y2, world );
         world.temp_grid[ x2 ][ y2 ].ant = world.grid[ x2 ][ y2 ].ant;
         world.ants_out_of_nest++;
@@ -95,13 +83,23 @@ function spawn_ant() {
 
 // Move to an individual ant level
 function check_for_food() {
-    for ( let i = 0; i < world.grid_length; i = i + 1 ) {
-        for ( let j = 0; j < world.grid_length; j = j + 1) {
-            if ( world.grid[ i ][ j ].has_ant() && ! world.grid[ i ][ j ].ant.has_food) {
-                if ( world.grid[ i ][ j ].food > 0) {
-                    world.grid[ i ][ j ].ant.has_food = true;
-                    world.grid[ i ][ j ].food--;	
+    for ( let x = 0; x < world.grid_length; x = x + 1 ) {
+        for ( let y = 0; y < world.grid_length; y = y + 1) {
+            if ( world.grid[ x ][ y ].has_ant() && ! world.grid[ x ][ y ].ant.has_food ) {
+                if ( world.grid[ x ][ y ].food > 0 ) {
+                    world.grid[ x ][ y ].ant.has_food = true;
+                    world.grid[ x ][ y ].food--;	
                 }
+            }
+        }
+    }
+}
+
+function sense_signal() {
+    for ( let x = 0; x < world.grid_length; x = x + 1 ) {
+        for ( let y = 0; y < world.grid_length; y = y + 1) {
+            if ( world.grid[ x ][ y ].has_ant()) {
+                world.grid[ x ][ y ].ant.last_signal = world.grid[ x ][ y ].signal;
             }
         }
     }
