@@ -51,17 +51,18 @@ class Renderer {
     }
 
     color_for_cell = ( cell ) => {
+        let colour = colours.background;
+
         if ( cell.has_ant() ) {
-            return cell.ant.has_food ? "rgb(159,248,101)" : "rgb(0,0,0)";
+            colour = cell.ant.has_food ? colours.antFood : colours.ant;
         }
         else if ( cell.food > 0 ) {
-            return "rgba(86,169,46," + Math.pow( cell.food / 10, 0.5 ) + ")";
+            colour =  utils.set_opacity( colours.food, Math.pow( cell.food / 10, 0.5 ) );
         }
-        else {
-            if ( cell.signal > 0 ) {
-                return "rgba(17,103,189," + cell.signal + ")";
-            }
-            else return colours.background;
+        else if ( cell.signal > 0 ) {
+            colour = utils.set_opacity( colours.signal, cell.signal );
         }
+
+        return colour;
     }
 }

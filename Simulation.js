@@ -75,7 +75,7 @@ function spawn_ant() {
     let x2 = new_coords[0];
     let y2 = new_coords[1];
     if ( ! world.grid[ x2 ][ y2 ].has_ant() && world.ants_out_of_nest < world.max_ants_on_grid ) {
-        world.grid[ x2 ][ y2 ].ant = new Ant( x2, y2, world );
+        world.grid[ x2 ][ y2 ].ant = new Ant( x2, y2, world, renderer.context );
         world.temp_grid[ x2 ][ y2 ].ant = world.grid[ x2 ][ y2 ].ant;
         world.ants_out_of_nest++;
     }

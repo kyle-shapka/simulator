@@ -1,11 +1,15 @@
 let colours = {
-    background: '#333'
+    background: 'rgba( 51, 51, 51, 255 )',//'#333333',
+    ant:  'rgba( 0, 0, 0, 255 )',
+    food: 'rgba( 86, 169, 46, 255 )', //#56a92e
+    antFood: 'rgba( 159, 248, 101, 255 )', //#9FF865,
+    signal: 'rgba( 17, 103, 255 )'//'#116700'
 }
 
 let utils = {
 
     // Replaces indices that would be outside of range with min or max, respectively.
-    get_bounded_index ( index, min, max ) {
+    get_bounded_index: ( index, min, max ) => {
         let bounded_index = index;
         if ( index < min ) {
             bounded_index = min;
@@ -33,4 +37,26 @@ let utils = {
     degrees_to_radians: ( degrees ) => {
         return degrees * Math.PI / 180;
     },
+
+    // Get the colour of the canvas at a given pixel location.
+    get_colour: ( context, x, y ) => {
+        let data = context.getImageData( x, y, 1, 1 ).data;
+        let rgba = `rgba( ${ data[0] }, ${ data[1] }, ${ data[2] }, ${ data[3] } )`;
+        return rgba;
+
+    },
+
+    // Adds opacity to a given colour.
+    set_opacity: ( colour, opacity ) => {
+        let rgba = colour.replace(/[^\d,]/g, '').split(',');
+        let alpha = Math.round( Math.min( Math.max( opacity || 1, 0 ), 1 ) * 255 );
+        
+        //return colour + alpha.toString( 16 ).toUpperCase();
+        //console.log(`rgba( ${ rgba[0] }, ${ rgba[1] }, ${ rgba[2] }, ${ alpha } )`);
+        return `rgba( ${ rgba[0] }, ${ rgba[1] }, ${ rgba[2] }, ${ alpha / 255 } )`;
+    },
+
+    get_opacity: ( colour ) => {
+        return colour[3] / 255;
+    }
 }
