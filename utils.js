@@ -1,5 +1,7 @@
 let colours = {
-    background: '#333'
+    background: 'rgba( 51, 51, 51, 1 )',
+    food: 'rgba( )',
+    signal: 'rgba( )'
 }
 
 let utils = {
@@ -32,5 +34,13 @@ let utils = {
     // Translates degrees to radians.
     degrees_to_radians: ( degrees ) => {
         return degrees * Math.PI / 180;
+    },
+
+    // Adds opacity to a given colour.
+    set_opacity: ( colour, opacity ) => {
+        let rgba = colour.replace(/[^\d,]/g, '').split(',');
+        let alpha = Math.round( Math.min( Math.max( opacity || 1, 0 ), 1 ) * 255 );
+        
+        return `rgba( ${ rgba[0] }, ${ rgba[1] }, ${ rgba[2] }, ${ alpha / 255 } )`;
     },
 }
