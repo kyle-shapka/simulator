@@ -58,7 +58,7 @@ function move_ants() {
                 }
             }
             else {
-                world.grid[ x ][ y ].signal *= 0.95;	
+                world.grid[ x ][ y ].signal *= 0.98;	
             }
             if ( world.grid[ x ][ y ].signal < 0.05 ) {
                 world.grid[ x ][ y ].signal = 0;	

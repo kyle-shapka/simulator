@@ -1,7 +1,9 @@
 let colours = {
-    background: 'rgba( 51, 51, 51, 1 )',
-    food: 'rgba( )',
-    signal: 'rgba( )'
+    background: 'rgba( 51, 51, 51, 255 )',//'#333333',
+    ant:  'rgba( 0, 0, 0, 255 )',
+    food: 'rgba( 86, 169, 46, 255 )', //#56a92e
+    antFood: 'rgba( 159, 248, 101, 255 )', //#9FF865,
+    signal: 'rgba( 17, 103, 255 )'//'#116700'
 }
 
 let utils = {
